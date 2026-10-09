@@ -25,3 +25,125 @@
 .outline-button:disabled:hover{background:transparent}
 @media(max-width:800px){.mood-card:last-child{grid-column:auto;min-height:155px}.mood-card:last-child .mood-swatch{margin:20px 0 15px}.mood-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){.orb-halo,.orb,.orb-shadow,.keepsake-orb{animation:none!important}}
+
+
+/* AFTERIMAGE — responsive finishing pass */
+html{scroll-padding-top:22px;scroll-behavior:smooth}
+body{overflow-x:hidden}
+button{touch-action:manipulation}
+::selection{background:#dfc4a2;color:#26241f}
+.text-link,.wordmark,.restart-button{transition:color .25s ease,border-color .25s ease}
+.text-link:hover,.restart-button:hover{color:#9c6f49;border-color:#9c6f49}
+.orb-scene{touch-action:manipulation}
+.orb-scene:hover .orb{transform:translateY(-5px) rotate(0deg) scale(1.015)}
+.orb-scene:active .orb{transform:scale(.98)}
+.orb,.orb-halo,.orb-shadow,.keepsake-orb{will-change:transform}
+.mood-card{border-radius:2px}
+.mood-card:active{transform:scale(.985)}
+.primary-button,.outline-button,.restart-button{min-height:44px}
+.primary-button{border-radius:2px;box-shadow:0 7px 18px #00000012}
+.primary-button:focus-visible,.outline-button:focus-visible,.restart-button:focus-visible{outline-offset:4px}
+.memory-input-wrap input{min-width:0}
+.keepsake-card{border:1px solid #d9c8ad}
+.keepsake-quote p{overflow-wrap:anywhere}
+.keepsake-top span,.keepsake-bottom span{overflow-wrap:anywhere}
+.footer .wordmark{flex-shrink:0}
+@media(min-width:1200px){
+  .hero{min-height:700px}
+  .orb-scene{width:460px}
+  .experience{padding-top:135px;padding-bottom:130px}
+}
+@media(max-width:800px){
+  .hero{padding-top:62px;padding-bottom:76px;gap:12px}
+  .hero-copy{max-width:560px}
+  .hero-art{min-height:clamp(285px,76vw,390px)}
+  .orb-scene{width:min(88vw,350px)}
+  .orb-hint{right:1%;font-size:8px}
+  .hero-foot{left:0;right:0;gap:10px;font-size:8px}
+  .intro-band p{line-height:1.4}
+  .mood-card{padding:16px 14px;min-width:0}
+  .mood-note{font-size:11px}
+  .selected-feeling{gap:10px}
+  .selected-left{min-width:0}
+  .selected-left p{max-width:100%;line-height:1.6}
+  .prompt-inner{width:min(100%,570px)}
+  .memory-input-wrap{gap:8px}
+  .memory-input-wrap input{min-width:0}
+  .primary-button{min-height:48px}
+  .keepsake-section{gap:27px}
+  .keepsake-heading h2{font-size:clamp(42px,9vw,58px)}
+  .keepsake-card{min-height:0}
+  .keepsake-visual{height:clamp(210px,58vw,280px)}
+  .keepsake-quote{min-height:100px}
+  .keepsake-quote p{font-size:clamp(20px,4.8vw,25px)}
+  .keepsake-actions{align-items:stretch}
+  .keepsake-actions p{margin:0}
+  .outline-button{min-height:46px}
+}
+@media(max-width:480px){
+  .topbar{height:60px}
+  .wordmark{font-size:11px;letter-spacing:.14em}
+  .section-wrap{width:90%}
+  .hero{padding-top:53px;padding-bottom:65px}
+  .hero h1{font-size:clamp(43px,11vw,55px);line-height:1.04}
+  .hero-description{max-width:31ch;line-height:1.75}
+  .hero-art{min-height:clamp(260px,76vw,315px)}
+  .art-index{font-size:8px}
+  .art-caption{width:86%;font-size:8px;letter-spacing:.06em}
+  .hero-foot{font-size:7px;bottom:22px}
+  .intro-band{padding:36px 22px}
+  .intro-band p{font-size:20px}
+  .intro-band span{font-size:9px;line-height:1.8}
+  .experience{padding:72px 0}
+  .section-heading h2{font-size:clamp(40px,10vw,51px)}
+  .section-heading>p:last-child{max-width:29ch;margin:16px auto 0;line-height:1.7}
+  .mood-grid{gap:8px;margin-top:30px}
+  .mood-card{min-height:150px;padding:14px 12px}
+  .mood-number,.mood-check{font-size:9px}
+  .mood-swatch{width:30px;height:30px;margin:17px 0 12px}
+  .mood-label{font-size:13px}
+  .mood-note{font-size:10px;line-height:1.45}
+  .selected-feeling{padding:23px 16px;min-height:160px}
+  .mini-label{font-size:8px;letter-spacing:.07em}
+  .selected-left h3{font-size:30px}
+  .selected-left p{font-size:11px;max-width:23ch}
+  .selected-orb{width:54px;height:54px;flex:0 0 54px}
+  .selected-orb div{width:38px;height:38px}
+  .selected-index{right:12px;bottom:10px;font-size:7px}
+  .prompt-section{padding:68px 20px 72px}
+  .prompt-inner h2{font-size:clamp(42px,10.5vw,54px);margin-top:28px}
+  .prompt-copy{font-size:13px;margin:17px 0 32px}
+  .memory-label{font-size:9px;letter-spacing:.06em}
+  .memory-label span{font-size:8px}
+  .memory-input-wrap input{font-size:15px}
+  .memory-input-wrap>span{font-size:8px;flex-shrink:0}
+  .privacy-note{align-items:flex-start;line-height:1.6}
+  .keepsake-section{padding:70px 0}
+  .keepsake-card{padding:17px 15px 16px}
+  .keepsake-top,.keepsake-bottom{font-size:7px;letter-spacing:.07em}
+  .keepsake-visual{height:215px}
+  .keepsake-orb{width:140px}
+  .keepsake-ring{width:190px;height:68px}
+  .ring-two{width:210px;height:82px}
+  .keepsake-quote{padding:8px 0 22px;min-height:94px}
+  .quote-mark{font-size:38px}
+  .keepsake-quote p{font-size:20px;line-height:1.4}
+  .closing{padding:68px 22px 74px}
+  .closing h2{font-size:clamp(37px,9.5vw,48px)}
+  .closing-copy{max-width:30ch;margin:18px auto 22px;line-height:1.7}
+  .footer{min-height:70px;gap:12px}
+  .footer>span:last-child{font-size:7px}
+}
+@media(max-width:350px){
+  .mood-card{padding:12px 10px}
+  .selected-feeling{padding:20px 12px}
+  .selected-orb{display:none}
+  .keepsake-top span:first-child{max-width:54%}
+  .keepsake-top span:last-child{max-width:42%}
+}
+@media(hover:none){
+  .mood-card:hover,.primary-button:hover,.outline-button:hover{transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .orb-scene:hover .orb,.orb-scene:active .orb,.mood-card:active{transform:none}
+}
