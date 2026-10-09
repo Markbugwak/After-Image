@@ -1,6 +1,6 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ArrowDown, ArrowRight, ArrowUpRight, Check, Download, Heart, RotateCcw, Volume2, VolumeX } from 'lucide-react'
+import { ArrowDown, ArrowRight, ArrowUpRight, Check, Download, Heart, RotateCcw } from 'lucide-react'
 import './styles.css'
 
 const moods = [
@@ -12,7 +12,8 @@ const moods = [
 ]
 
 function Orb({ mood, onClick }) {
-  return <button className={`orb-scene mood-${mood.id}`} onClick={onClick} aria-label="Change the light">
+  const nextMood = moods[(moods.findIndex(item => item.id === mood.id) + 1) % moods.length]
+  return <button className={`orb-scene mood-${mood.id}`} onClick={onClick} aria-label={`Current mood: ${mood.label}. Choose next mood: ${nextMood.label}`} title={`Current mood: ${mood.label}. Click for ${nextMood.label}`}>
     <div className="orb-halo" />
     <div className="orb">
       <div className="orb-shine" />
@@ -28,22 +29,26 @@ function App() {
   const [activeMood, setActiveMood] = useState(moods[0])
   const [memory, setMemory] = useState('')
   const [made, setMade] = useState(false)
-  const [soundOn, setSoundOn] = useState(false)
   const [saved, setSaved] = useState(false)
-  const canvasRef = useRef(null)
+  const [notice, setNotice] = useState('')
   const mood = activeMood
   const personalizedLine = useMemo(() => {
     const cleaned = memory.trim().replace(/[.!?]+$/, '')
-    return cleaned ? `For ${cleaned.toLowerCase()}, and the part of you that remembers.` : mood.quote
+    return cleaned ? `For ${cleaned}, and the part of you that remembers.` : mood.quote
   }, [memory, mood])
 
   function makeAfterimage() {
     setMade(true)
     setSaved(false)
+    setNotice('')
     setTimeout(() => document.getElementById('keepsake')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80)
   }
 
   function downloadArt() {
+    if (!made) {
+      setNotice('Create your afterimage first, then you can save it as an image.')
+      return
+    }
     const canvas = document.createElement('canvas')
     canvas.width = 1200
     canvas.height = 1500
@@ -70,8 +75,18 @@ function App() {
     ctx.fillStyle = mood.ink
     ctx.font = '500 22px monospace'
     ctx.fillText('AFTERIMAGE  /  A MOMENT TO KEEP', 90, 100)
-    ctx.font = 'italic 54px Georgia'
-    wrapText(ctx, personalizedLine, 90, 1040, 1010, 70)
+    let quoteFontSize = 54
+    ctx.font = `italic ${quoteFontSize}px Georgia`
+    while (ctx.measureText(personalizedLine).width > 1010 && quoteFontSize > 38) {
+      quoteFontSize -= 2
+      ctx.font = `italic ${quoteFontSize}px Georgia`
+    }
+    const quoteLineHeight = Math.round(quoteFontSize * 1.3)
+    const quoteBottom = wrapText(ctx, personalizedLine, 90, 1040, 1010, quoteLineHeight)
+    if (quoteBottom > 1300) {
+      ctx.font = 'italic 38px Georgia'
+      wrapText(ctx, personalizedLine, 90, 1020, 1010, 48)
+    }
     ctx.font = '22px monospace'
     ctx.globalAlpha = .7
     ctx.fillText(mood.small, 90, 1370)
@@ -94,15 +109,14 @@ function App() {
       } else line = test
     }
     ctx.fillText(line, x, y)
+    return y
   }
 
   return <main className={`app mood-${mood.id}`}>
     <header className="topbar">
       <a href="#top" className="wordmark" aria-label="Afterimage home"><span className="brand-dot" /> AFTERIMAGE</a>
       <span className="top-note">A SMALL SPACE TO FEEL</span>
-      <button className="sound-toggle" onClick={() => setSoundOn(v => !v)} aria-label={soundOn ? 'Turn sound off' : 'Turn sound on'}>
-        {soundOn ? <Volume2 size={15}/> : <VolumeX size={15}/>} <span>SOUND {soundOn ? 'ON' : 'OFF'}</span>
-      </button>
+      <span className="top-note">MADE OF A FEELING</span>
     </header>
 
     <section className="hero section-wrap" id="top">
@@ -135,7 +149,7 @@ function App() {
         <p>There is no right answer. Choose the feeling that found you.</p>
       </div>
       <div className="mood-grid" role="group" aria-label="Choose a mood">
-        {moods.map((item, i) => <button key={item.id} className={`mood-card ${mood.id === item.id ? 'selected' : ''}`} onClick={() => { setActiveMood(item); setMade(false); setSaved(false) }} style={{'--mood-color': item.color, '--mood-glow': item.glow, '--mood-ink': item.ink}}>
+        {moods.map((item, i) => <button key={item.id} type="button" aria-pressed={mood.id === item.id} className={`mood-card ${mood.id === item.id ? 'selected' : ''}`} onClick={() => { if (mood.id !== item.id && made) setNotice('Your previous afterimage was cleared because the mood changed. Create a new one when you are ready.'); setActiveMood(item); setMade(false); setSaved(false) }} style={{'--mood-color': item.color, '--mood-glow': item.glow, '--mood-ink': item.ink}}>
           <span className="mood-number">0{i + 1}</span>
           <span className="mood-swatch"><span /></span>
           <span className="mood-label">{item.label}</span>
@@ -156,12 +170,14 @@ function App() {
         <h2>Hold a thought<br/>for a <em>moment.</em></h2>
         <p className="prompt-copy">A person, a place, a version of yourself. Whatever comes to mind, let it have a little room.</p>
         <label className="memory-label" htmlFor="memory">WHAT'S ON YOUR MIND? <span>OPTIONAL</span></label>
+        <p id="memory-help" className="memory-help">Up to 80 characters. Your words stay as you typed them.</p>
         <div className="memory-input-wrap">
-          <input id="memory" value={memory} onChange={e => { setMemory(e.target.value); setMade(false) }} maxLength={80} placeholder="The summer we stayed out late..." />
-          <span>{memory.length}/80</span>
+          <input id="memory" value={memory} onChange={e => { if (made) setNotice('Your previous afterimage was cleared because your memory changed. Create it again to save the updated version.'); setMemory(e.target.value); setMade(false); setSaved(false) }} maxLength={80} aria-describedby="memory-help memory-count" placeholder="The summer we stayed out late..." />
+          <span id="memory-count" className={memory.length >= 72 ? "near-limit" : ""}>{memory.length}/80</span>
         </div>
         <button className="primary-button" onClick={makeAfterimage}>Create my afterimage <ArrowRight size={16}/></button>
         <p className="privacy-note"><Heart size={12}/> This moment stays in your browser. Nothing is uploaded.</p>
+        {notice && <p className="interaction-notice" role="status">{notice}</p>}
       </div>
     </section>
 
@@ -171,7 +187,7 @@ function App() {
         <h2>A feeling,<br/><em>made visible.</em></h2>
       </div>
       <div className={`keepsake-card ${made ? 'revealed' : ''}`} style={{'--mood-color': mood.color, '--mood-glow': mood.glow, '--mood-ink': mood.ink}}>
-        <div className="keepsake-top"><span>AFTERIMAGE / 001</span><span>{mood.small}</span></div>
+        <div className="keepsake-top"><span>AFTERIMAGE / A MOMENT TO KEEP</span><span>{mood.small}</span></div>
         <div className="keepsake-visual"><div className="keepsake-glow"/><div className="keepsake-orb"><div/></div><div className="keepsake-ring ring-one"/><div className="keepsake-ring ring-two"/></div>
         <div className="keepsake-quote">
           <span className="quote-mark">“</span>
@@ -181,7 +197,7 @@ function App() {
       </div>
       <div className="keepsake-actions">
         <p>{made ? 'Your afterimage is here. Keep it close.' : 'Choose a feeling and create your own small keepsake.'}</p>
-        <button className="outline-button" onClick={downloadArt}><Download size={15}/>{saved ? 'Download again' : 'Save as image'}</button>
+        <button className="outline-button" onClick={downloadArt} disabled={!made} title={!made ? "Create your afterimage before saving" : "Download your afterimage as a PNG"}><Download size={15}/>{saved ? 'Download again' : 'Save as image'}</button>
       </div>
     </section>
 
@@ -198,7 +214,6 @@ function App() {
       <span>MADE SLOWLY, FOR A MOMENT.</span>
       <span>© 2026 AFTERIMAGE</span>
     </footer>
-    <canvas ref={canvasRef} className="hidden-canvas" aria-hidden="true"/>
   </main>
 }
 
