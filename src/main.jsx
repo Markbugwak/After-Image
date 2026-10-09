@@ -130,6 +130,9 @@ function App() {
         <div className="art-index">FIG. 01 <span>—</span> LIGHT, REMEMBERED</div>
         <Orb mood={mood} onClick={() => {
           const index = moods.findIndex(m => m.id === mood.id)
+          if (made) setNotice('Your previous afterimage was cleared because the mood changed. Create a new one when you are ready.')
+          setMade(false)
+          setSaved(false)
           setActiveMood(moods[(index + 1) % moods.length])
         }}/>
         <div className="art-caption"><span>01 / 05</span><span>AN EVER-CHANGING THING</span></div>
@@ -149,7 +152,7 @@ function App() {
         <p>There is no right answer. Choose the feeling that found you.</p>
       </div>
       <div className="mood-grid" role="group" aria-label="Choose a mood">
-        {moods.map((item, i) => <button key={item.id} type="button" aria-pressed={mood.id === item.id} className={`mood-card ${mood.id === item.id ? 'selected' : ''}`} onClick={() => { if (mood.id !== item.id && made) setNotice('Your previous afterimage was cleared because the mood changed. Create a new one when you are ready.'); setActiveMood(item); setMade(false); setSaved(false) }} style={{'--mood-color': item.color, '--mood-glow': item.glow, '--mood-ink': item.ink}}>
+        {moods.map((item, i) => <button key={item.id} type="button" aria-pressed={mood.id === item.id} className={`mood-card ${mood.id === item.id ? 'selected' : ''}`} onClick={() => { if (made) setNotice('Your previous afterimage was cleared because the mood was selected again. Create a new one when you are ready.'); setActiveMood(item); setMade(false); setSaved(false) }} style={{'--mood-color': item.color, '--mood-glow': item.glow, '--mood-ink': item.ink}}>
           <span className="mood-number">0{i + 1}</span>
           <span className="mood-swatch"><span /></span>
           <span className="mood-label">{item.label}</span>
